@@ -1,0 +1,21 @@
+# PDF 解析
+pdfplumber>=0.10.0
+pymupdf>=1.23.0
+Pillow>=10.0.0
+
+# LLM
+openai>=1.0.0
+
+# 历史数据
+yfinance>=0.2.30
+
+# 图表与数值
+matplotlib>=3.7.0
+numpy>=1.24.0
+pandas>=2.0.0
+
+# 环境变量
+python-dotenv>=1.0.0
+
+# 可选：本地模型支持
+# ollama  # 如果使用本地Ollama模型
