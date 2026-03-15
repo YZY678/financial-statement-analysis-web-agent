@@ -1,0 +1,163 @@
+{% extends "base.html" %}
+
+{% block title %}在线报告 - 财报分析平台{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+	<div class="d-flex justify-content-between align-items-center mb-3">
+		<h2 class="mb-0">在线报告</h2>
+		<a class="btn btn-outline-primary" href="{{ url_for('download_report', task_id=task.id) }}">下载报告</a>
+	</div>
+
+	<div class="card mb-4">
+		<div class="card-header"><strong>结构化财务分析报告（由后端报告提取）</strong></div>
+		<div class="card-body">
+			<div class="mb-4">
+				<h5>执行摘要</h5>
+				<ul class="mb-0">
+					{% for point in structured.executive_points %}
+					<li>{{ point }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+			<div class="mb-4">
+				<h5>关键发现</h5>
+				{% if structured.key_findings %}
+				<ul class="mb-0">
+					{% for finding in structured.key_findings %}
+					<li>{{ finding }}</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<p class="text-muted mb-0">暂无关键发现。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>数据质量</h5>
+				{% if structured.data_quality %}
+				<ul class="mb-0">
+					{% for item in structured.data_quality %}
+					<li>{{ item }}</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<p class="text-muted mb-0">暂无数据质量告警。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>关键财务表</h5>
+				{{ structured.key_tables_html|safe }}
+			</div>
+
+			<div class="mb-4">
+				<h5>财务表可视化</h5>
+				{% if structured.charts and structured.charts|length > 0 %}
+				<div class="row g-3">
+					{% for chart in structured.charts %}
+					<div class="col-12">
+						<div class="border rounded p-3 bg-white">
+							<h6 class="mb-2">{{ chart.title }}</h6>
+							<div>{{ chart.data|safe }}</div>
+						</div>
+					</div>
+					{% endfor %}
+				</div>
+				{% else %}
+				<p class="text-muted mb-0">暂无可视化图表。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>财务比率分析</h5>
+				{% if structured.ratios and structured.ratios|length > 0 %}
+				<div class="table-responsive">
+					<table class="table table-sm table-hover">
+						<thead>
+							<tr><th>指标</th><th class="text-end">最新值</th></tr>
+						</thead>
+						<tbody>
+							{% for row in structured.ratios %}
+							<tr>
+								<td>{{ row.name }}</td>
+								<td class="text-end">{{ row.latest }}</td>
+							</tr>
+							{% endfor %}
+						</tbody>
+					</table>
+				</div>
+				{% else %}
+				<p class="text-muted mb-0">暂无比率指标。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>建议与措施</h5>
+				{% if structured.recommendations %}
+				<ul class="mb-0">
+					{% for rec in structured.recommendations %}
+					<li>{{ rec }}</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<p class="text-muted mb-0">暂无建议与措施。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>风险提示</h5>
+				{% if structured.risks %}
+				<ul class="mb-0">
+					{% for risk in structured.risks %}
+					<li>{{ risk }}</li>
+					{% endfor %}
+				</ul>
+				{% else %}
+				<p class="text-muted mb-0">暂无风险提示。</p>
+				{% endif %}
+			</div>
+
+			<div class="mb-4">
+				<h5>结论</h5>
+				<ul class="mb-0">
+					{% for line in structured.conclusion %}
+					<li>{{ line }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+
+			<div>
+				<h5>数据溯源</h5>
+				{{ structured.traceability_html|safe }}
+			</div>
+		</div>
+	</div>
+
+	{% if charts and charts|length > 0 %}
+	<div class="card mb-4">
+		<div class="card-header"><strong>可视化图表</strong></div>
+		<div class="card-body">
+			<div class="row g-3">
+				{% for chart in charts %}
+				<div class="col-12">
+					<div class="border rounded p-3 bg-white">
+						<h5 class="mb-3">{{ chart.title }}</h5>
+						<div>{{ chart.data|safe }}</div>
+					</div>
+				</div>
+				{% endfor %}
+			</div>
+		</div>
+	</div>
+	{% endif %}
+
+	<div class="card">
+		<div class="card-header"><strong>报告正文（后端原始报告，可视化渲染）</strong></div>
+		<div class="card-body report-body">
+			{{ report_content_html|safe }}
+		</div>
+	</div>
+</div>
+{% endblock %}

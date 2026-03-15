@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}财报分析平台{% endblock %}</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.8.1/font/bootstrap-icons.css">
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- 自定义CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/financial.css') }}">
+    
+    <!-- Plotly -->
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    {% block extra_css %}{% endblock %}
+    
+    <style>
+        :root {
+            --brand-900: #0b2f33;
+            --brand-700: #0f5e63;
+            --brand-500: #158e95;
+            --brand-300: #7ad1d3;
+            --accent-600: #f08a3c;
+            --accent-400: #f6b26b;
+            --ink-900: #0f172a;
+            --ink-700: #334155;
+            --ink-500: #64748b;
+            --surface-100: #f8fafc;
+            --surface-200: #eef2f7;
+            --surface-300: #e2e8f0;
+            --glass: rgba(255, 255, 255, 0.78);
+        }
+        
+        .navbar-brand {
+            font-weight: 700;
+        }
+        
+        .nav-link.active {
+            font-weight: 600;
+            border-bottom: 3px solid var(--accent-600);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-bg" aria-hidden="true"></div>
+    <!-- 导航栏 -->
+    <nav class="navbar navbar-expand-lg navbar-dark" style="background-color: var(--brand-900);">
+        <div class="container">
+            <a class="navbar-brand" href="{{ url_for('index') }}">
+                <span class="brand-badge me-2"><i class="bi bi-graph-up"></i></span>
+                <span class="brand-title">财报智析</span>
+                <span class="brand-subtitle d-none d-md-inline">Financial Statement Agent</span>
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'index' %}active{% endif %}" 
+                           href="{{ url_for('index') }}">
+                            <i class="bi bi-house me-1"></i>首页
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'upload_financial' %}active{% endif %}" 
+                           href="{{ url_for('upload_financial') }}">
+                            <i class="bi bi-cloud-upload me-1"></i>财报分析
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link {% if request.endpoint == 'agent_console' %}active{% endif %}" 
+                           href="{{ url_for('agent_console') }}">
+                            <i class="bi bi-robot me-1"></i>智能体
+                        </a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <i class="bi bi-download me-1"></i>示例文件
+                        </a>
+                        <ul class="dropdown-menu">
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('download_sample', sample_type='income') }}">
+                                    <i class="bi bi-file-earmark-text me-2"></i>利润表示例
+                                </a>
+                            </li>
+                            <li>
+                                <a class="dropdown-item" href="{{ url_for('download_sample', sample_type='balance') }}">
+                                    <i class="bi bi-file-earmark-text me-2"></i>资产负债表示例
+                                </a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 消息提示 -->
+    <div class="container mt-3">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ 'danger' if category == 'error' else 'success' }} alert-dismissible fade show">
+                        <div class="d-flex align-items-center">
+                            {% if category == 'success' %}
+                                <i class="bi bi-check-circle-fill me-2"></i>
+                            {% else %}
+                                <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                            {% endif %}
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <!-- 主要内容 -->
+    <main class="container py-4">
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- 页脚 -->
+    <footer class="bg-light py-4 mt-5 border-top">
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6">
+                    <h5 class="mb-3">财报分析平台</h5>
+                    <p class="text-muted">
+                        专业的财务报表分析工具，帮助企业快速分析财务状况，
+                        提供决策支持。
+                    </p>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">功能</h5>
+                    <ul class="list-unstyled">
+                        <li><a href="{{ url_for('upload_financial') }}" class="text-decoration-none text-muted">财报分析</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">财务比率计算</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">趋势分析</a></li>
+                        <li><a href="#" class="text-decoration-none text-muted">报告生成</a></li>
+                    </ul>
+                </div>
+                <div class="col-md-3">
+                    <h5 class="mb-3">技术支持</h5>
+                    <p class="text-muted">
+                        <i class="bi bi-hdd-network me-2"></i>后端: Python 3.10 + Flask 3 + Gunicorn
+                    </p>
+                    <p class="text-muted">
+                        <i class="bi bi-cpu me-2"></i>智能体: 上游 Agent Runtime + 会话执行编排
+                    </p>
+                    <p class="text-muted">
+                        <i class="bi bi-database-check me-2"></i>数据: Pandas + NumPy + Openpyxl + pdfplumber
+                    </p>
+                    <p class="text-muted">
+                        <i class="bi bi-window-stack me-2"></i>前端: Bootstrap 5 + 原生 JS + Fetch API
+                    </p>
+                    <p class="text-muted mb-0">
+                        <i class="bi bi-graph-up-arrow me-2"></i>可视化: Plotly + Matplotlib + 图表中心下载链路
+                    </p>
+                </div>
+            </div>
+            <hr>
+            <div class="text-center text-muted">
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 自定义JS -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+    
+    {% block extra_js %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,9 @@
+﻿指标英文,指标中文,数值,单位
+period,报告期间,2025年度,
+scope,口径,unknown,
+unit_standard,单位,亿元,
+ticker,股票代码,600519,
+company_name,公司名称,贵州茅台,
+validation,validation,"{'revenue_breakdown_sum': 162.0, 'revenue_total': 162.0, 'is_consistent': True}",
+revenue,营业收入,162.0,亿元
+net_income,归母净利润,103.0,亿元

@@ -1,0 +1,58 @@
+============================================================
+财报分析平台 - 环境检查
+============================================================
+✓ Python版本检查通过
+✓ 目录存在: uploads
+✓ 目录存在: reports
+✓ 目录存在: static
+✓ 目录存在: templates
+✓ 目录存在: utils
+✓ 示例文件存在: data/samples/income_statement.csv
+✓ 示例文件存在: data/samples/balance_sheet.csv
+\n============================================================
+启动财报分析平台...
+============================================================
+📊 应用名称: 财报分析平台
+🌐 访问地址: http://127.0.0.1:5000
+📁 上传目录: /root/web/financial-analysis-platform/uploads
+📄 报告目录: /root/web/financial-analysis-platform/reports
+⚙️  运行模式: 生产模式
+🧩 运行参数: HOST=0.0.0.0 PORT=5000
+============================================================
+提示:
+1. 按 Ctrl+C 停止应用
+2. 首次使用建议上传示例文件
+3. 访问 http://localhost:5000/sample/income 下载示例
+============================================================
+ * Serving Flask app 'app'
+ * Debug mode: off
+[31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on all addresses (0.0.0.0)
+ * Running on http://127.0.0.1:5000
+ * Running on http://172.17.0.9:5000
+[33mPress CTRL+C to quit[0m
+127.0.0.1 - - [15/Mar/2026 21:09:55] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:09:57] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:09:57] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:09:57] "[36mGET /static/css/financial.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:09:58] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:10:07] "GET /results/07eec45c-57da-4861-ba60-09625ccbec04 HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:23] "GET /task/b5e955b0-902c-42d4-becd-bec4fbe5c4de HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:23] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:23] "[36mGET /static/css/financial.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:23] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:27] "GET /results/b5e955b0-902c-42d4-becd-bec4fbe5c4de HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:27] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:27] "[36mGET /static/css/financial.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:27] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "GET /report/b5e955b0-902c-42d4-becd-bec4fbe5c4de HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "GET /report/b5e955b0-902c-42d4-becd-bec4fbe5c4de HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "[36mGET /static/css/financial.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "[36mGET /report_asset/b5e955b0-902c-42d4-becd-bec4fbe5c4de/charts/chart_income_profit.png HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "[36mGET /report_asset/b5e955b0-902c-42d4-becd-bec4fbe5c4de/charts/chart_cashflow.png HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:28] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:49] "GET / HTTP/1.1" 200 -
+127.0.0.1 - - [15/Mar/2026 21:12:50] "[36mGET /static/css/style.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:50] "[36mGET /static/css/financial.css HTTP/1.1[0m" 304 -
+127.0.0.1 - - [15/Mar/2026 21:12:50] "[36mGET /static/js/main.js HTTP/1.1[0m" 304 -

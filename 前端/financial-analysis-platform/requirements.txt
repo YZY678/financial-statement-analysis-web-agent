@@ -1,0 +1,30 @@
+# Web框架
+Flask==3.0.0
+Flask-WTF==1.2.1
+Werkzeug==3.0.1
+
+# 数据处理
+pandas==2.1.4
+numpy==1.24.3
+openpyxl==3.1.2
+xlrd==2.0.1  # 支持旧版Excel
+chardet==5.2.0  # 处理不同编码的文件
+python-docx==1.1.2  # 解析DOCX表格
+pillow==10.4.0  # 图片处理
+pytesseract==0.3.13  # OCR识别
+pdfplumber==0.11.4  # 解析PDF表格/文本
+pymupdf==1.24.11  # 上游仓库PDF回退解析
+
+# 数据可视化
+plotly==5.18.0
+matplotlib==3.8.2
+
+# 财务分析
+yfinance==0.2.36  # 如果需要获取实时数据
+scipy==1.11.4
+
+# 其他工具
+python-dotenv==1.0.0
+pandas-datareader==0.10.0
+openai==1.50.2  # 上游仓库LLM客户端依赖
+reportlab==4.2.5  # 生成PDF下载报告

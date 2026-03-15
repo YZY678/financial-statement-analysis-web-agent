@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}服务异常 - 财报分析平台{% endblock %}
+
+{% block content %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-5 text-center">
+                    <h1 class="display-6 text-danger mb-3">500</h1>
+                    <h3 class="mb-3">服务暂时不可用</h3>
+                    <p class="text-muted mb-4">页面处理时发生异常，请稍后重试或返回首页重新开始。</p>
+                    <div class="d-flex justify-content-center gap-2">
+                        <a href="{{ url_for('index') }}" class="btn btn-primary">返回首页</a>
+                        <a href="{{ url_for('upload_financial') }}" class="btn btn-outline-secondary">前往上传页</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

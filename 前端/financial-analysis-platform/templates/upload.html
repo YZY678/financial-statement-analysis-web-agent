@@ -1,0 +1,587 @@
+{% extends "base.html" %}
+
+{% block title %}财报分析 - 财报分析平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .upload-card {
+        border: none;
+        border-radius: 20px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.12);
+    }
+    
+    .upload-area {
+        border: 3px dashed #dee2e6;
+        border-radius: 10px;
+        padding: 3rem 2rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        background-color: #f8f9fa;
+    }
+    
+    .upload-area:hover {
+        border-color: #158e95;
+        background-color: #effbfb;
+    }
+    
+    .upload-area.drag-over {
+        border-color: #158e95;
+        background-color: #e3f7f7;
+        transform: scale(1.02);
+    }
+    
+    .upload-icon {
+        font-size: 4rem;
+        color: #6c757d;
+        margin-bottom: 1rem;
+    }
+    
+    .upload-area:hover .upload-icon {
+        color: #158e95;
+    }
+    
+    .file-preview {
+        display: none;
+        animation: fadeIn 0.3s ease;
+    }
+    
+    .file-info {
+        background: white;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-top: 1rem;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    }
+    
+    .file-type-icon {
+        width: 50px;
+        height: 50px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        color: white;
+    }
+    
+    .csv-file { background-color: #28a745; }
+    .excel-file { background-color: #0f5e63; }
+    
+    .analysis-option {
+        border: 2px solid #e9ecef;
+        border-radius: 10px;
+        padding: 1rem;
+        margin-bottom: 1rem;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .analysis-option:hover {
+        border-color: #158e95;
+        background-color: #f4fbfb;
+    }
+    
+    .analysis-option.selected {
+        border-color: #158e95;
+        background-color: #e6f7f7;
+        box-shadow: 0 0 0 3px rgba(21, 142, 149, 0.1);
+    }
+    
+    .analysis-icon {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2rem;
+        background-color: #e6f7f7;
+        color: #0f5e63;
+        margin-right: 1rem;
+    }
+    
+    .step-indicator {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+    }
+    
+    .step {
+        text-align: center;
+        flex: 1;
+        position: relative;
+    }
+    
+    .step:not(:last-child)::after {
+        content: '';
+        position: absolute;
+        top: 15px;
+        right: -50%;
+        width: 100%;
+        height: 2px;
+        background-color: #dee2e6;
+        z-index: 1;
+    }
+    
+    .step.active:not(:last-child)::after {
+        background-color: #158e95;
+    }
+    
+    .step-number {
+        width: 30px;
+        height: 30px;
+        border-radius: 50%;
+        background-color: #e9ecef;
+        color: #6c757d;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin: 0 auto 0.5rem;
+        font-weight: 600;
+        z-index: 2;
+        position: relative;
+    }
+    
+    .step.active .step-number {
+        background-color: #158e95;
+        color: white;
+    }
+    
+    @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-10">
+        <div class="card upload-card">
+            <div class="card-body p-4">
+                <!-- 步骤指示器 -->
+                <div class="step-indicator">
+                    <div class="step active">
+                        <div class="step-number">1</div>
+                        <div class="step-label small">选择文件 / Upload</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-label small">设置选项 / Configure</div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-label small">开始分析 / Run</div>
+                    </div>
+                </div>
+                
+                <h3 class="text-center mb-2">财报分析</h3>
+                <p class="text-center text-muted mb-4">
+                    上传财务报表，我们将自动识别并生成可视化报告。
+                    <span class="d-block">Upload statements to get instant ratios, trends, and insights.</span>
+                </p>
+                
+                <form method="POST" enctype="multipart/form-data" id="uploadForm">
+                    {{ form.hidden_tag() }}
+                    
+                    <!-- 第一步：文件上传 -->
+                    <div id="step1">
+                        <div class="mb-4">
+                            <div class="upload-area" id="dropZone">
+                                <div class="upload-icon">
+                                    <i class="bi bi-cloud-upload"></i>
+                                </div>
+                                <h4>拖放财务报表文件</h4>
+                                <p class="text-muted mb-3">Drop files here or click to select</p>
+                                
+                                <button type="button" class="btn btn-primary px-4" id="selectFileBtn">
+                                    <i class="bi bi-folder2-open me-2"></i>选择文件
+                                </button>
+                                
+                                <p class="mt-3 mb-0 small text-muted">
+                                    支持格式: CSV / Excel / 图片 / DOCX / PDF
+                                </p>
+                                <p class="small text-muted">
+                                    Max size: 10MB
+                                </p>
+                                
+                                {{ form.file(id="file", class="d-none", onchange="handleFileSelect(event)") }}
+                            </div>
+                            
+                            <!-- 文件预览 -->
+                            <div id="filePreview" class="file-preview">
+                                <div class="file-info">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <div class="d-flex align-items-center">
+                                            <div id="fileIcon" class="file-type-icon me-3">
+                                                <i class="bi bi-file-earmark-text"></i>
+                                            </div>
+                                            <div>
+                                                <h6 id="fileName" class="mb-1"></h6>
+                                                <p id="fileSize" class="mb-0 small text-muted"></p>
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeFile()">
+                                                <i class="bi bi-trash"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="d-flex justify-content-end">
+                            <button type="button" class="btn btn-primary px-4" onclick="nextStep()" id="nextBtn" disabled>
+                                下一步 <i class="bi bi-arrow-right ms-2"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- 第二步：设置选项 -->
+                    <div id="step2" class="d-none">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">公司名称 / Company</label>
+                                {{ form.company_name(class="form-control", placeholder="例如: ABC股份有限公司") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">报表类型 / Report Type</label>
+                                {{ form.report_type(class="form-select") }}
+                                <div class="form-text">选择"自动检测"让系统自动识别</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">分析类型 / Analysis Mode</label>
+                            <div class="row g-2">
+                                {% for choice in form.analysis_type.choices %}
+                                <div class="col-md-4">
+                                    <div class="analysis-option" 
+                                         data-value="{{ choice[0] }}"
+                                         onclick="selectAnalysisType('{{ choice[0] }}')">
+                                        <div class="d-flex align-items-center">
+                                            <div class="analysis-icon">
+                                                {% if choice[0] == 'basic' %}
+                                                    <i class="bi bi-card-checklist"></i>
+                                                {% elif choice[0] == 'profitability' %}
+                                                    <i class="bi bi-currency-dollar"></i>
+                                                {% elif choice[0] == 'solvency' %}
+                                                    <i class="bi bi-shield-check"></i>
+                                                {% elif choice[0] == 'growth' %}
+                                                    <i class="bi bi-graph-up-arrow"></i>
+                                                {% elif choice[0] == 'agent' %}
+                                                    <i class="bi bi-robot"></i>
+                                                {% else %}
+                                                    <i class="bi bi-star"></i>
+                                                {% endif %}
+                                            </div>
+                                            <div>
+                                                <h6 class="mb-1">{{ analysis_types[choice[0]] }}</h6>
+                                                <p class="small text-muted mb-0">
+                                                    {% if choice[0] == 'basic' %}
+                                                        基础财务指标
+                                                    {% elif choice[0] == 'profitability' %}
+                                                        盈利能力分析
+                                                    {% elif choice[0] == 'solvency' %}
+                                                        偿债能力分析
+                                                    {% elif choice[0] == 'growth' %}
+                                                        成长性分析
+                                                    {% elif choice[0] == 'agent' %}
+                                                        Agent驱动的智能财务分析
+                                                    {% else %}
+                                                        全面财务分析
+                                                    {% endif %}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                            </div>
+                            {{ form.analysis_type(id="analysisType", class="d-none") }}
+                        </div>
+                        
+                        <div class="mb-4 form-check">
+                            {{ form.include_benchmark(class="form-check-input") }}
+                            <label class="form-check-label" for="include_benchmark">
+                                包含行业基准对比（需要网络连接） / Include benchmark
+                            </label>
+                        </div>
+                        
+                        <div class="d-flex justify-content-between">
+                            <button type="button" class="btn btn-outline-secondary px-4" onclick="prevStep()">
+                                <i class="bi bi-arrow-left me-2"></i>上一步
+                            </button>
+                            <button type="submit" class="btn btn-success px-4" id="submitBtn">
+                                <i class="bi bi-play-circle me-2"></i>开始分析
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <!-- 帮助信息 -->
+        <div class="card mt-4">
+            <div class="card-body">
+                <h5 class="card-title">
+                    <i class="bi bi-question-circle me-2 text-primary"></i>使用提示 / Tips
+                </h5>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul class="mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                确保财务报表包含期间列（如"期间"、"日期"）
+                            </li>
+                            <li class="mb-2">
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                使用标准的中文科目名称，便于系统识别
+                            </li>
+                            <li>
+                                <i class="bi bi-check-circle text-success me-2"></i>
+                                支持 CSV/Excel/图片/DOCX/PDF，图片识别依赖 OCR 环境
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul class="mb-0">
+                            <li class="mb-2">
+                                <i class="bi bi-download text-primary me-2"></i>
+                                <a href="{{ url_for('download_sample', sample_type='income') }}" class="text-decoration-none">
+                                    下载利润表示例文件 / Sample Income Statement
+                                </a>
+                            </li>
+                            <li>
+                                <i class="bi bi-download text-primary me-2"></i>
+                                <a href="{{ url_for('download_sample', sample_type='balance') }}" class="text-decoration-none">
+                                    下载资产负债表示例文件 / Sample Balance Sheet
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let selectedFile = null;
+let currentStep = 1;
+
+// 格式化文件大小
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+// 处理文件选择
+function handleFileSelect(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    selectedFile = file;
+    
+    // 更新文件预览
+    const filePreview = document.getElementById('filePreview');
+    const fileIcon = document.getElementById('fileIcon');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    
+    // 设置文件图标
+    if (file.name.toLowerCase().endsWith('.csv')) {
+        fileIcon.className = 'file-type-icon csv-file';
+        fileIcon.innerHTML = '<i class="bi bi-filetype-csv"></i>';
+    } else if (file.name.toLowerCase().endsWith('.xlsx') || file.name.toLowerCase().endsWith('.xls')) {
+        fileIcon.className = 'file-type-icon excel-file';
+        fileIcon.innerHTML = '<i class="bi bi-filetype-xlsx"></i>';
+    } else if (file.name.toLowerCase().endsWith('.docx')) {
+        fileIcon.className = 'file-type-icon excel-file';
+        fileIcon.innerHTML = '<i class="bi bi-filetype-docx"></i>';
+    } else if (file.name.toLowerCase().endsWith('.pdf')) {
+        fileIcon.className = 'file-type-icon excel-file';
+        fileIcon.innerHTML = '<i class="bi bi-file-earmark-pdf"></i>';
+    } else if (['.png', '.jpg', '.jpeg'].some(ext => file.name.toLowerCase().endsWith(ext))) {
+        fileIcon.className = 'file-type-icon excel-file';
+        fileIcon.innerHTML = '<i class="bi bi-file-earmark-image"></i>';
+    }
+    
+    // 设置文件名和大小
+    fileName.textContent = file.name;
+    fileSize.textContent = formatFileSize(file.size);
+    
+    // 显示文件预览
+    filePreview.style.display = 'block';
+    
+    // 启用下一步按钮
+    document.getElementById('nextBtn').disabled = false;
+}
+
+// 移除文件
+function removeFile() {
+    selectedFile = null;
+    document.getElementById('file').value = '';
+    document.getElementById('filePreview').style.display = 'none';
+    document.getElementById('nextBtn').disabled = true;
+}
+
+// 拖放功能
+document.addEventListener('DOMContentLoaded', function() {
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('file');
+    
+    if (!dropZone || !fileInput) return;
+    
+    // 阻止默认拖放行为
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, preventDefaults, false);
+        document.body.addEventListener(eventName, preventDefaults, false);
+    });
+    
+    function preventDefaults(e) {
+        e.preventDefault();
+        e.stopPropagation();
+    }
+    
+    // 高亮拖放区域
+    ['dragenter', 'dragover'].forEach(eventName => {
+        dropZone.addEventListener(eventName, highlight, false);
+    });
+    
+    ['dragleave', 'drop'].forEach(eventName => {
+        dropZone.addEventListener(eventName, unhighlight, false);
+    });
+    
+    function highlight() {
+        dropZone.classList.add('drag-over');
+    }
+    
+    function unhighlight() {
+        dropZone.classList.remove('drag-over');
+    }
+    
+    // 处理文件放置
+    dropZone.addEventListener('drop', handleDrop, false);
+    
+    function handleDrop(e) {
+        const dt = e.dataTransfer;
+        const files = dt.files;
+        
+        if (files.length > 0) {
+            const file = files[0];
+            
+            // 检查文件类型
+            const validTypes = ['csv', 'xlsx', 'xls', 'png', 'jpg', 'jpeg', 'docx', 'pdf'];
+            const fileExt = file.name.split('.').pop().toLowerCase();
+            
+            if (!validTypes.includes(fileExt)) {
+                alert('仅支持 CSV、Excel、图片、DOCX 与 PDF 格式');
+                return;
+            }
+            
+            // 检查文件大小（10MB）
+            if (file.size > 10 * 1024 * 1024) {
+                alert('文件大小不能超过10MB');
+                return;
+            }
+            
+            // 创建FileList对象
+            const dataTransfer = new DataTransfer();
+            dataTransfer.items.add(file);
+            fileInput.files = dataTransfer.files;
+            
+            // 触发change事件
+            const event = new Event('change', { bubbles: true });
+            fileInput.dispatchEvent(event);
+        }
+    }
+    
+    const selectFileBtn = document.getElementById('selectFileBtn');
+    if (selectFileBtn) {
+        selectFileBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            fileInput.click();
+        });
+    }
+
+    // 点击上传区域触发文件选择
+    dropZone.addEventListener('click', function(e) {
+        if (e.target.closest('#selectFileBtn')) {
+            return;
+        }
+        fileInput.click();
+    });
+    
+    // 设置默认分析类型
+    selectAnalysisType('comprehensive');
+});
+
+// 步骤切换
+function nextStep() {
+    if (currentStep === 1 && !selectedFile) {
+        alert('请先选择文件');
+        return;
+    }
+    
+    // 更新步骤指示器
+    document.querySelectorAll('.step')[currentStep - 1].classList.remove('active');
+    document.querySelectorAll('.step')[currentStep].classList.add('active');
+    
+    // 切换显示内容
+    document.getElementById('step' + currentStep).classList.add('d-none');
+    document.getElementById('step' + (currentStep + 1)).classList.remove('d-none');
+    
+    currentStep++;
+}
+
+function prevStep() {
+    // 更新步骤指示器
+    document.querySelectorAll('.step')[currentStep - 1].classList.remove('active');
+    document.querySelectorAll('.step')[currentStep - 2].classList.add('active');
+    
+    // 切换显示内容
+    document.getElementById('step' + currentStep).classList.add('d-none');
+    document.getElementById('step' + (currentStep - 1)).classList.remove('d-none');
+    
+    currentStep--;
+}
+
+// 选择分析类型
+function selectAnalysisType(type) {
+    document.getElementById('analysisType').value = type;
+    
+    // 更新UI选择状态
+    document.querySelectorAll('.analysis-option').forEach(option => {
+        if (option.dataset.value === type) {
+            option.classList.add('selected');
+        } else {
+            option.classList.remove('selected');
+        }
+    });
+}
+
+// 表单提交验证
+document.getElementById('uploadForm').addEventListener('submit', function(e) {
+    if (!selectedFile) {
+        e.preventDefault();
+        alert('请选择要上传的文件');
+        return false;
+    }
+    
+    // 显示加载状态
+    const submitBtn = document.getElementById('submitBtn');
+    submitBtn.disabled = true;
+    submitBtn.innerHTML = '<i class="bi bi-hourglass-split me-2"></i>上传中...';
+    
+    return true;
+});
+</script>
+{% endblock %}

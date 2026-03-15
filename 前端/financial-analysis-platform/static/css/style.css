@@ -1,0 +1,391 @@
+/* 基础样式 */
+:root {
+    --brand-900: #0b2f33;
+    --brand-700: #0f5e63;
+    --brand-500: #158e95;
+    --brand-300: #7ad1d3;
+    --accent-700: #d96f1f;
+    --accent-600: #f08a3c;
+    --accent-400: #f6b26b;
+    --ink-900: #0f172a;
+    --ink-700: #334155;
+    --ink-500: #64748b;
+    --surface-100: #f8fafc;
+    --surface-200: #eef2f7;
+    --surface-300: #e2e8f0;
+    --glass: rgba(255, 255, 255, 0.78);
+}
+
+body {
+    font-family: 'Noto Sans SC', system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
+    color: var(--ink-900);
+    background-color: var(--surface-100);
+    min-height: 100vh;
+}
+
+.page-bg {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    background:
+        radial-gradient(1200px 600px at 10% -10%, rgba(122, 209, 211, 0.35), transparent 60%),
+        radial-gradient(900px 500px at 90% 10%, rgba(246, 178, 107, 0.25), transparent 55%),
+        linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+}
+
+.page-bg::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: radial-gradient(rgba(15, 23, 42, 0.05) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.5;
+}
+
+h1, h2, h3, h4, h5, h6,
+.brand-title,
+.section-title {
+    font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif;
+    letter-spacing: -0.02em;
+}
+
+.brand-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent-600), var(--accent-400));
+    color: #0f172a;
+    font-size: 1.1rem;
+}
+
+.brand-title {
+    font-weight: 700;
+    font-size: 1.15rem;
+    margin-right: 0.4rem;
+}
+
+.brand-subtitle {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.65);
+    margin-left: 0.5rem;
+}
+
+.section-header {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1.75rem;
+}
+
+.section-eyebrow {
+    font-size: 0.85rem;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--brand-700);
+    font-weight: 600;
+}
+
+.section-subtitle {
+    color: var(--ink-500);
+    margin-bottom: 0;
+}
+
+.hero-splash {
+    position: relative;
+    border-radius: 24px;
+    padding: 3.5rem 3rem;
+    background: linear-gradient(130deg, rgba(11, 47, 51, 0.98), rgba(15, 94, 99, 0.92));
+    color: #f8fafc;
+    overflow: hidden;
+    box-shadow: 0 25px 60px rgba(8, 26, 31, 0.25);
+}
+
+.hero-splash::after {
+    content: '';
+    position: absolute;
+    inset: -20% -10% auto auto;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(246, 178, 107, 0.55), transparent 60%);
+    opacity: 0.8;
+}
+
+.hero-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1rem;
+    margin-top: 2rem;
+}
+
+.hero-card {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 16px;
+    padding: 1.25rem;
+    backdrop-filter: blur(10px);
+    color: #f8fafc;
+}
+
+.hero-card strong {
+    display: block;
+    font-size: 1.15rem;
+    margin-bottom: 0.35rem;
+}
+
+.glass-panel {
+    background: var(--glass);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 18px;
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.1);
+    backdrop-filter: blur(14px);
+}
+
+.feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.25rem;
+}
+
+.feature-tile {
+    padding: 1.5rem;
+    border-radius: 18px;
+    background: #ffffff;
+    border: 1px solid var(--surface-300);
+    box-shadow: 0 12px 30px rgba(15, 23, 42, 0.08);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-tile:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 22px 40px rgba(15, 23, 42, 0.12);
+}
+
+.feature-icon {
+    width: 52px;
+    height: 52px;
+    border-radius: 14px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(21, 142, 149, 0.12);
+    color: var(--brand-700);
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
+}
+
+.soft-card {
+    background: #ffffff;
+    border-radius: 18px;
+    border: 1px solid var(--surface-300);
+    box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+}
+
+.accent-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: rgba(240, 138, 60, 0.15);
+    color: var(--accent-700);
+    font-weight: 600;
+    font-size: 0.85rem;
+}
+
+.stat-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.35rem 0.75rem;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    color: #f8fafc;
+    font-size: 0.85rem;
+}
+
+/* 卡片样式 */
+.card {
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 15px 30px rgba(15, 23, 42, 0.08);
+    transition: transform 0.3s ease;
+}
+
+.card:hover {
+    box-shadow: 0 22px 40px rgba(15, 23, 42, 0.12);
+}
+
+/* 按钮样式 */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+}
+
+.btn-primary {
+    background-color: var(--brand-700);
+    border-color: var(--brand-700);
+}
+
+.btn-primary:hover {
+    background-color: var(--brand-900);
+    border-color: var(--brand-900);
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(15, 94, 99, 0.35);
+}
+
+.btn-outline-primary {
+    color: var(--brand-700);
+    border-color: var(--brand-700);
+}
+
+.btn-outline-primary:hover {
+    background-color: var(--brand-700);
+    border-color: var(--brand-700);
+    transform: translateY(-2px);
+}
+
+/* 表单样式 */
+.form-control, .form-select {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus, .form-select:focus {
+    border-color: var(--brand-500);
+    box-shadow: 0 0 0 0.25rem rgba(21, 142, 149, 0.2);
+}
+
+/* 表格样式 */
+.table {
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.table thead th {
+    background-color: var(--brand-700);
+    color: white;
+    border: none;
+}
+
+.table tbody tr:hover {
+    background-color: rgba(21, 142, 149, 0.08);
+}
+
+/* 导航栏样式 */
+.navbar {
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+.nav-link {
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    transition: all 0.3s ease;
+}
+
+.nav-link:hover {
+    background-color: rgba(255,255,255,0.1);
+}
+
+.nav-link.active {
+    font-weight: 600;
+    border-bottom: 3px solid var(--accent-600);
+}
+
+/* 进度条样式 */
+.progress {
+    border-radius: 10px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.progress-bar {
+    background: linear-gradient(90deg, var(--brand-700), var(--brand-300));
+    border-radius: 10px;
+    transition: width 1s ease-in-out;
+}
+
+/* 警告框样式 */
+.alert {
+    border: none;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+}
+
+.alert-success {
+    background-color: #e6f7f0;
+    color: #0f5132;
+    border-left: 4px solid #2f9e82;
+}
+
+.alert-danger {
+    background-color: #fdecee;
+    color: #7f1d1d;
+    border-left: 4px solid #dc2626;
+}
+
+.alert-warning {
+    background-color: #fff4e5;
+    color: #7c4a02;
+    border-left: 4px solid #f59e0b;
+}
+
+/* 徽章样式 */
+.badge {
+    padding: 0.35em 0.65em;
+    font-weight: 600;
+    border-radius: 20px;
+}
+
+/* 响应式调整 */
+@media (max-width: 768px) {
+    .container {
+        padding-left: 15px;
+        padding-right: 15px;
+    }
+
+    .display-4 {
+        font-size: 2.5rem;
+    }
+
+    .lead {
+        font-size: 1.1rem;
+    }
+
+    .hero-splash {
+        padding: 2.5rem 1.75rem;
+    }
+}
+
+/* 动画效果 */
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes slideInUp {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.5s ease;
+}
+
+.animate-slide-up {
+    animation: slideInUp 0.5s ease;
+}
