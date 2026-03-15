@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}页面未找到 - 财报分析平台{% endblock %}
+
+{% block content %}
+<div class="text-center py-5">
+    <i class="bi bi-exclamation-circle display-1 text-muted mb-3"></i>
+    <h2 class="mb-3">页面未找到</h2>
+    <p class="text-muted mb-4">您访问的页面不存在或已被移动。</p>
+    <a class="btn btn-primary" href="{{ url_for('index') }}">
+        <i class="bi bi-house me-2"></i>返回首页
+    </a>
+</div>
+{% endblock %}

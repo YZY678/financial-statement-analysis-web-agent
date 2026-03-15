@@ -1,0 +1,242 @@
+/* 财务分析专用样式 */
+
+/* 财务比率卡片 */
+.ratio-card {
+    border: none;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    border-left: 4px solid;
+}
+
+.ratio-card.good {
+    border-left-color: #28a745;
+    background: linear-gradient(135deg, rgba(168, 213, 186, 0.1), rgba(168, 213, 186, 0.2));
+}
+
+.ratio-card.warning {
+    border-left-color: #ffc107;
+    background: linear-gradient(135deg, rgba(249, 199, 132, 0.1), rgba(249, 199, 132, 0.2));
+}
+
+.ratio-card.danger {
+    border-left-color: #dc3545;
+    background: linear-gradient(135deg, rgba(247, 108, 94, 0.1), rgba(247, 108, 94, 0.2));
+}
+
+.ratio-value {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+}
+
+.ratio-label {
+    color: #6c757d;
+    font-size: 0.9rem;
+}
+
+.ratio-description {
+    font-size: 0.85rem;
+    color: #6c757d;
+    margin-top: 0.5rem;
+}
+
+/* 财务趋势图表 */
+.financial-chart {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #f1f1f1;
+}
+
+.chart-title {
+    color: #0f5e63;
+    font-weight: 600;
+    margin: 0;
+}
+
+.chart-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* 财务指标网格 */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.metric-item {
+    background: white;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.05);
+    text-align: center;
+}
+
+.metric-value {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #0f5e63;
+    margin-bottom: 0.25rem;
+}
+
+.metric-label {
+    font-size: 0.85rem;
+    color: #6c757d;
+}
+
+.metric-change {
+    font-size: 0.75rem;
+    margin-top: 0.25rem;
+}
+
+.metric-change.positive {
+    color: #28a745;
+}
+
+.metric-change.negative {
+    color: #dc3545;
+}
+
+/* 财务分析报告样式 */
+.report-section {
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.section-title {
+    color: #0f5e63;
+    border-bottom: 2px solid #e9ecef;
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+/* 对比分析样式 */
+.comparison-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+}
+
+.comparison-column {
+    padding: 1.5rem;
+    background: white;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+}
+
+.comparison-title {
+    color: #0f5e63;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+/* 财务健康度指示器 */
+.health-indicator {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.health-score {
+    font-size: 2rem;
+    font-weight: 700;
+}
+
+.health-label {
+    font-size: 0.75rem;
+    color: #6c757d;
+}
+
+.health-good {
+    background: linear-gradient(135deg, #A8D5BA, #7BC8A4);
+    color: white;
+}
+
+.health-warning {
+    background: linear-gradient(135deg, #F9C784, #F7A54A);
+    color: white;
+}
+
+.health-danger {
+    background: linear-gradient(135deg, #F76C5E, #F44336);
+    color: white;
+}
+
+/* 财报表格样式 */
+.financial-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1rem 0;
+}
+
+.financial-table th,
+.financial-table td {
+    padding: 0.75rem;
+    text-align: right;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.financial-table th {
+    background-color: #0f5e63;
+    color: white;
+    font-weight: 600;
+    text-align: center;
+}
+
+.financial-table tr:last-child td {
+    border-bottom: none;
+}
+
+.financial-table tr:hover {
+    background-color: rgba(15, 94, 99, 0.08);
+}
+
+.financial-table .highlight {
+    background-color: rgba(249, 199, 132, 0.2);
+    font-weight: 600;
+}
+
+/* 打印样式 */
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    
+    body {
+        background: white;
+        color: black;
+        font-size: 12pt;
+    }
+    
+    .card, .financial-chart, .report-section {
+        box-shadow: none;
+        border: 1px solid #dee2e6;
+    }
+    
+    .btn {
+        display: none;
+    }
+}

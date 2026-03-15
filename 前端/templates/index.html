@@ -1,0 +1,202 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 财报分析平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .recent-task-item {
+        border-left: 4px solid;
+        padding: 1rem 1.25rem;
+        margin-bottom: 1rem;
+        border-radius: 12px;
+        background: #ffffff;
+        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+        transition: transform 0.3s ease;
+    }
+
+    .recent-task-item:hover {
+        transform: translateY(-4px);
+    }
+
+    .task-status-badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 999px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<!-- 英雄区域 -->
+<section class="hero-splash">
+    <div class="position-relative" style="z-index: 1;">
+        <div class="accent-chip mb-3">
+            <i class="bi bi-robot"></i>
+            Agent驱动分析
+        </div>
+        <h1 class="display-5 fw-bold mb-3">财报智析平台</h1>
+        <p class="lead mb-2">
+            上传财务报表，自动识别科目，生成比率、趋势与洞察报告。
+        </p>
+        <p class="text-white-50 mb-4">Financial statement insights with automated ratios, trends, and agent summaries.</p>
+        <div class="d-flex flex-wrap gap-3">
+            <a href="{{ url_for('upload_financial') }}" class="btn btn-light btn-lg px-4">
+                <i class="bi bi-cloud-upload me-2"></i>开始分析
+            </a>
+            <a href="{{ url_for('download_sample', sample_type='income') }}" class="btn btn-outline-light btn-lg px-4">
+                <i class="bi bi-download me-2"></i>示例文件
+            </a>
+        </div>
+        <div class="hero-grid">
+            <div class="hero-card">
+                <strong>多格式输入</strong>
+                CSV/Excel/图片/DOCX/PDF自动解析
+            </div>
+            <div class="hero-card">
+                <strong>指标即刻呈现</strong>
+                盈利、偿债、成长性一键分析
+            </div>
+            <div class="hero-card">
+                <strong>报告可下载</strong>
+                PDF报告 + 原始数据
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 最近任务 -->
+<section class="mb-5">
+    <div class="container">
+        <div class="soft-card">
+            <div class="card-header bg-transparent border-0 pt-4 px-4">
+                <div class="section-header">
+                    <span class="section-eyebrow">RECENT</span>
+                    <h3 class="mb-0">最近分析任务</h3>
+                    <p class="section-subtitle">Track your latest runs and resume insights.</p>
+                </div>
+            </div>
+            <div class="card-body">
+                {% if recent_tasks %}
+                    <div class="list-group list-group-flush">
+                        {% for task in recent_tasks %}
+                        <a href="{{ url_for('task_status', task_id=task.id) }}" 
+                           class="list-group-item list-group-item-action border-0 p-0 mb-3">
+                            <div class="recent-task-item 
+                                {% if task.status == 'completed' %}border-success
+                                {% elif task.status == 'processing' %}border-warning
+                                {% elif task.status == 'failed' %}border-danger
+                                {% elif task.status == 'cancelled' %}border-secondary
+                                {% else %}border-secondary{% endif %}">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <div>
+                                        <h6 class="mb-1">{{ task.company_name }}</h6>
+                                        <p class="text-muted mb-0 small">
+                                            <i class="bi bi-calendar me-1"></i>{{ task.start_time }}
+                                            {% if task.report_type != 'auto' %}
+                                            <i class="bi bi-file-earmark-text ms-3 me-1"></i>
+                                            {{ financial_templates.get(task.report_type, task.report_type) }}
+                                            {% endif %}
+                                        </p>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        {% if task.status == 'completed' %}
+                                        <span class="task-status-badge bg-success text-white me-3">
+                                            <i class="bi bi-check-circle me-1"></i>已完成
+                                        </span>
+                                        {% elif task.status == 'processing' %}
+                                        <span class="task-status-badge bg-warning text-dark me-3">
+                                            <i class="bi bi-arrow-repeat me-1"></i>分析中
+                                        </span>
+                                        {% elif task.status == 'failed' %}
+                                        <span class="task-status-badge bg-danger text-white me-3">
+                                            <i class="bi bi-exclamation-triangle me-1"></i>失败
+                                        </span>
+                                        {% elif task.status == 'cancelled' %}
+                                        <span class="task-status-badge bg-secondary text-white me-3">
+                                            <i class="bi bi-stop-circle me-1"></i>已停止
+                                        </span>
+                                        {% else %}
+                                        <span class="task-status-badge bg-secondary text-white me-3">
+                                            <i class="bi bi-clock me-1"></i>等待中
+                                        </span>
+                                        {% endif %}
+
+                                        {% if task.status in ['completed', 'failed', 'cancelled'] %}
+                                        <button class="btn btn-sm btn-outline-danger me-2" 
+                                                onclick="event.preventDefault(); event.stopPropagation(); deleteTask('{{ task.id }}')">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                        {% endif %}
+                                        
+                                        <i class="bi bi-chevron-right text-muted"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                        {% endfor %}
+                    </div>
+                {% else %}
+                    <div class="text-center py-4">
+                        <i class="bi bi-inbox display-1 text-muted mb-3"></i>
+                        <h5>暂无分析任务</h5>
+                        <p class="text-muted">Start your first financial statement analysis.</p>
+                        <a href="{{ url_for('upload_financial') }}" class="btn btn-primary">
+                            <i class="bi bi-cloud-upload me-2"></i>上传财务报表
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- 使用指南 -->
+<section>
+    <div class="container">
+        <div class="glass-panel p-4">
+            <div class="section-header">
+                <span class="section-eyebrow">GUIDE</span>
+                <h3 class="mb-0">三步完成财报分析</h3>
+                <p class="section-subtitle">Upload, configure, and review in minutes.</p>
+            </div>
+            <div class="feature-grid">
+                <div class="feature-tile">
+                    <div class="feature-icon"><i class="bi bi-folder2-open"></i></div>
+                    <h6>准备文件</h6>
+                    <p class="text-muted mb-0">CSV/Excel/图片/DOCX均可，建议包含期间与核心科目。</p>
+                </div>
+                <div class="feature-tile">
+                    <div class="feature-icon"><i class="bi bi-sliders"></i></div>
+                    <h6>选择分析</h6>
+                    <p class="text-muted mb-0">支持盈利、偿债、成长性与Agent模式的组合分析。</p>
+                </div>
+                <div class="feature-tile">
+                    <div class="feature-icon"><i class="bi bi-file-earmark-bar-graph"></i></div>
+                    <h6>导出报告</h6>
+                    <p class="text-muted mb-0">在线浏览图表与洞察，一键下载报告与原始数据。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+async function deleteTask(taskId) {
+    if (!confirm('确认删除该任务记录？')) return;
+    try {
+        const resp = await fetch(`/api/task/${taskId}`, { method: 'DELETE' });
+        const data = await resp.json();
+        if (!resp.ok) {
+            alert(data.error || '删除失败');
+            return;
+        }
+        location.reload();
+    } catch (err) {
+        alert('删除请求失败，请稍后重试');
+    }
+}
+</script>
+{% endblock %}

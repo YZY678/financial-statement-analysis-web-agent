@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}智能体控制台 - 财报分析平台{% endblock %}
+
+{% block extra_css %}
+<style>
+    .agent-hero {
+        background: linear-gradient(135deg, rgba(11, 47, 51, 0.98), rgba(21, 142, 149, 0.9));
+        color: #f8fafc;
+        padding: 2.5rem;
+        border-radius: 20px;
+        box-shadow: 0 20px 45px rgba(8, 26, 31, 0.25);
+        margin-bottom: 2rem;
+    }
+
+    .agent-panel {
+        background: #ffffff;
+        border-radius: 18px;
+        border: 1px solid var(--surface-300);
+        box-shadow: 0 18px 40px rgba(15, 23, 42, 0.08);
+        padding: 1.5rem;
+    }
+
+    .agent-log {
+        background: #0f172a;
+        color: #e2e8f0;
+        border-radius: 16px;
+        padding: 1.25rem;
+        min-height: 320px;
+        font-family: "Space Grotesk", "Noto Sans SC", sans-serif;
+        font-size: 0.95rem;
+        overflow-y: auto;
+    }
+
+    .agent-log p {
+        margin-bottom: 0.6rem;
+    }
+
+    .agent-log .log-user {
+        color: #7ad1d3;
+    }
+
+    .agent-log .log-system {
+        color: #f6b26b;
+    }
+
+    .file-tag {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        padding: 0.25rem 0.6rem;
+        border-radius: 999px;
+        background: rgba(21, 142, 149, 0.1);
+        color: #0f5e63;
+        font-size: 0.85rem;
+        margin-right: 0.4rem;
+        margin-bottom: 0.4rem;
+    }
+
+    .compare-table {
+        margin-top: 1rem;
+        border-radius: 12px;
+        border: 1px solid #e2e8f0;
+        overflow: hidden;
+    }
+
+    .compare-table table {
+        width: 100%;
+        margin: 0;
+        font-size: 0.85rem;
+    }
+
+    .compare-table thead {
+        background: #0f172a;
+        color: #f8fafc;
+    }
+
+    .compare-table th,
+    .compare-table td {
+        padding: 0.5rem 0.75rem;
+        border-bottom: 1px solid #e2e8f0;
+        text-align: right;
+    }
+
+    .compare-table th:first-child,
+    .compare-table td:first-child {
+        text-align: left;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<section class="agent-hero">
+    <div class="d-flex flex-column flex-lg-row justify-content-between gap-4">
+        <div>
+            <div class="accent-chip mb-3">
+                <i class="bi bi-robot"></i>
+                智能体会话
+            </div>
+            <h1 class="display-6 fw-bold">财经分析智能体控制台</h1>
+            <p class="mb-0">自然语言驱动 + 接口直连双模式。支持单/多文件上传、清洗、分析、图表、对比与导出。</p>
+        </div>
+        <div class="d-flex align-items-start gap-3">
+            <button class="btn btn-light" id="createSessionBtn">
+                <i class="bi bi-plus-circle me-2"></i>新建会话
+            </button>
+            <button class="btn btn-outline-light" id="resetSessionBtn" disabled>
+                <i class="bi bi-arrow-repeat me-2"></i>重置会话
+            </button>
+        </div>
+    </div>
+
+</section>
+
+<div class="row g-4">
+    <div class="col-lg-5">
+        <div class="agent-panel">
+            <h5 class="mb-3">文件与操作</h5>
+            <p class="text-muted small">操作区按照后端能力分层：上传 -> 清洗 -> 分析/图表 -> 对比 -> 导出。</p>
+            <div class="mb-3">
+                <label class="form-label">选择单文件</label>
+                <input type="file" class="form-control" id="singleFileInput">
+                <button class="btn btn-primary mt-2" id="uploadSingleBtn" disabled>
+                    上传单文件
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">选择多文件</label>
+                <input type="file" class="form-control" id="multiFileInput" multiple>
+                <button class="btn btn-outline-primary mt-2" id="uploadMultiBtn" disabled>
+                    上传多文件
+                </button>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label">已加载文件</label>
+                <div id="fileList"></div>
+            </div>
+
+            <div class="d-grid gap-2">
+                <button class="btn btn-success" id="cleanDataBtn" disabled>
+                    <i class="bi bi-brush me-2"></i>清洗数据
+                </button>
+                <div class="input-group">
+                    <select class="form-select" id="chartTypeSelect" disabled>
+                        <option value="income_trend">收入趋势图</option>
+                        <option value="profit_composition">利润构成图</option>
+                        <option value="balance_sheet">资产负债图</option>
+                        <option value="revenue_comparison">收入对比图</option>
+                        <option value="expense_breakdown">费用分解图</option>
+                    </select>
+                    <input type="text" class="form-control" id="chartTitleInput" placeholder="图表标题（可选）" disabled>
+                </div>
+                <button class="btn btn-outline-secondary" id="generateChartBtn" disabled>
+                    <i class="bi bi-graph-up-arrow me-2"></i>生成图表
+                </button>
+                <button class="btn btn-outline-secondary" id="compareChartBtn" disabled>
+                    <i class="bi bi-bar-chart me-2"></i>生成对比图
+                </button>
+                <button class="btn btn-outline-secondary" id="compareTableBtn" disabled>
+                    <i class="bi bi-table me-2"></i>生成对比表
+                </button>
+                <button class="btn btn-outline-secondary" id="analyzeBtn" disabled>
+                    <i class="bi bi-activity me-2"></i>财务健康分析
+                </button>
+            </div>
+
+            <div class="mt-4">
+                <h6 class="mb-2">⚡ 快捷指令</h6>
+                <div class="d-grid gap-2 mb-3">
+                    <button class="btn btn-outline-light" id="quickSmartBtn" disabled>
+                        📈 智能生成图表
+                    </button>
+                    <button class="btn btn-outline-light" id="quickRegenBtn" disabled>
+                        🔄 重新生成
+                    </button>
+                    <button class="btn btn-outline-light" id="quickStatusBtn" disabled>
+                        📄 系统状态
+                    </button>
+                </div>
+
+                <h6 class="mb-2">工具与导出</h6>
+                <div class="d-grid gap-2">
+                    <button class="btn btn-outline-dark" id="getConfigBtn" disabled>
+                        <i class="bi bi-sliders me-2"></i>查看工具配置
+                    </button>
+                    <button class="btn btn-outline-dark" id="getLogsBtn" disabled>
+                        <i class="bi bi-journal-text me-2"></i>查看会话日志
+                    </button>
+                    <button class="btn btn-outline-dark" id="exportJsonBtn" disabled>
+                        <i class="bi bi-download me-2"></i>导出 JSON
+                    </button>
+                    <button class="btn btn-outline-dark" id="exportHtmlBtn" disabled>
+                        <i class="bi bi-download me-2"></i>导出 HTML
+                    </button>
+                    <button class="btn btn-outline-dark" id="exportTxtBtn" disabled>
+                        <i class="bi bi-download me-2"></i>导出 TXT
+                    </button>
+                    <button class="btn btn-outline-dark" id="exportZipBtn" disabled>
+                        <i class="bi bi-download me-2"></i>导出 ZIP
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <div class="agent-panel">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h5 class="mb-0">智能体对话</h5>
+                <span class="badge bg-secondary" id="sessionStatus">未创建会话</span>
+            </div>
+            <div class="agent-log" id="agentLog"></div>
+            <div class="compare-table" id="compareTable"></div>
+            <div class="mt-3">
+                <div class="input-group">
+                    <input type="text" class="form-control" id="agentInput" placeholder="例如：对比营业收入，生成趋势图" disabled>
+                    <button class="btn btn-primary" id="sendAgentBtn" disabled>
+                        发送
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{{ url_for('static', filename='js/agent.js') }}"></script>
+{% endblock %}
